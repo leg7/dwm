@@ -1,0 +1,5 @@
+#!/bin/sh
+
+pkill -x status
+/home/leo/.local/bin/dwm-6.3/statusbar/status &
+notify-send --urgency=low "Statusbar refreshed!"
