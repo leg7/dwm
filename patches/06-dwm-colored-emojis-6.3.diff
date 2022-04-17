@@ -1,6 +1,8 @@
---- drw.c	2022-01-07 12:42:18.000000000 +0100
-+++ ../patched/drw.c	2022-04-17 12:55:50.736475072 +0200
-@@ -133,19 +133,6 @@
+diff --git a/drw.c b/drw.c
+index 4cdbcbe..c1c265c 100644
+--- a/drw.c
++++ b/drw.c
+@@ -133,19 +133,6 @@ xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
  		die("no font specified.");
  	}
  
