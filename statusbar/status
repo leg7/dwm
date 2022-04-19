@@ -1,70 +1,93 @@
 #!/bin/sh
-# This is my statusbar script for dwm, it display modules like the weather, uptime, date, time and even your battery life if you have a laptop.
+# This is my statusbar script for dwm, it display modules like:
+# the weather (with the moon phase at night), uptime, date, time and even your battery life if you have a laptop.
 # Every module is actually just a variable displayed with xsetroot
-# You can change the date and time format to your liking.
-# You should also change your location to your city to get correct weather forecasts
-#
-# The battery module finds your charging limit and calculates your effective battery life left.
-# For example if you have a charging limit set at 80% it will convert your battery life back on a scale of 0-100%
+# You can change the date and time format, module emojis, and delimiter to your liking.
+# You should also change the location variable to your city to get correct weather forecasts
 
-# Emojis
-uptime_emoji="🐧"
+# Emojis configuration
+uptime_emoji="😎"
 date_emoji="📆"
 time_emoji="🕘"
 music_emoji="🎧"
-battery_emoji="🔌"
-delimeter=" |"
+battery_emoji_high="🔋"
+battery_emoji_low="🪫"
+delimeter=" |"              # The delimiter must be set in the module variable otherwise if a module
+                            # end up not being displayed we will have useless and ugly delimiters in the statusbar
 
-
-# Weather variables
-timer=1					# This timer will fetch new weather information once it reaches the desired updatetime
+# Weather config
+timer=1					    # This timer will fetch new weather information once it reaches the desired updatetime
 updatetime=3600				# This variable sets the updatetime for the weather in seconds, 3600 seconds equals 1 hour
 location="angers"			# What city to get weather information about
-weather="$(curl -s "https://wttr.in/$location?format=%c%C+%f" | sed 's/\(^.\)..\(.*\)/\1\2/')$delimeter"
 
-while true
-do
-	# Modules are updated from left to right in the statusbar
+# This is a procedure to set and update the weather once a certain ammount of time has elapsed
+set_weather() {
+    # if it's night time show the moon phase emoji instead of the weather emoji
+    hour=$(date +"%H")
+    { [ "$hour" -gt 19 ] || [ "$hour" -lt 6 ] ;} && format="?format=%m+++%C+%f" || format="?format=%c%C+%f"
 
-	# You can't append the delimiter without sed here because it reads it like a pipe...
-	song="$(ncmpcpp --quiet --current-song=' %20a - %25t '$music_emoji | sed "s/$/$delimeter/")"
+    [ $timer -eq 1 ] && weather="$(curl -s "https://wttr.in/$location$format" | sed 's/\(^.\)..\(.*\)/\1\2/')$delimeter"
 
-	# Weather module
 	if [ $timer -lt $updatetime ]; then
 		timer=$((timer+1))
 	else
-		weather="$(curl wttr.in/$location?format="%C+%f")$delimeter"
 		timer=1
 	fi
+}
 
-	uptime="$uptime_emoji $(w | head -n1 | cut -c 10-100 | sed 's/,.*//g' | awk '{print $1" "$2" "$3}' | sed 's/\s*$//g')$delimeter"
+# This procedure sets the uptime with an emoji based on how long your system has been running
+set_uptime() {
+    uptime="$(uptime | cut -d ',' -f1 | sed 's/.*up/ Up/' | tr -s ' ' | sed 's/\(..\):\(..\)/\1h \2m/')"
 
-	date="$date_emoji $(date +"%a %d/%m")$delimeter" 	# wed 28/07
-	#	date="$(date +"%a %d/%m/%y")" 		# wed 28/07/2021
-	#	date="$(date +"%a %e %b %y")" 		# wed 28 july 2021
-	#	date="$(date +"%a, %b %d")" 		# wednesday, july 28
+    [ "$(echo "$uptime" | tr -dc '[:digit:]')" -gt 420 ] && uptime_emoji="🫠"
+    echo "$uptime" | grep -q day && uptime_emoji="♿"
+    uptime="$uptime_emoji$uptime$delimeter"
+}
 
-	time="$time_emoji $(date +"%H:%M")"		# 24h
-	# time="$(date +"$timeemoji %h:%m:%s")"		# 24h with seconds
-	# time="$(date +"$timeemoji %i:%m %p")" 	# 0-12 with a.m p.m
+# This procedure sets your battery life and normalizes it if you have a charging limit set to 80% for example
+# If you battery is low the low battery emoji will be used, if it is high the high battery emoji will be used
+# If no battery is found do nothing
+set_battery() {
+	if [ -r /sys/class/power_supply/BAT0/capacity ];then
+        battery=$(cat /sys/class/power_supply/BAT0/capacity)
+    else
+        battery=""   # If you disconnected your battery
+        return
+    fi
 
-	# Battery module, has to come last
-	if [ -f /sys/class/power_supply/BAT0/capacity ]
-	then
-		battery="$(cat /sys/class/power_supply/BAT0/capacity)"
+    [ "$battery" -lt 25 ] && battery_emoji=$battery_emoji_low || battery_emoji=$battery_emoji_high
 
-		if [ -f /sys/class/power_supply/BAT0/charge_stop_threshold ]
-		then
-			maxcharge=""0."$(cat /sys/class/power_supply/BAT0/charge_stop_threshold | tr -d '[ ]')"
-			coefficient="$(echo "scale=2; 1/"$maxcharge | bc)"
-			battery="$battery_emoji $(echo $battery" * "$coefficient"/1" | bc)%$delimeter" # divide by 1 to get the scale to 0 lmao
-		fi
+    # Normalize battery if needed
+    if [ -f /sys/class/power_supply/BAT0/charge_stop_threshold ];then
+        maxcharge="$(cat /sys/class/power_supply/BAT0/charge_stop_threshold)"
+        coefficient="$(echo "scale=3; 100 / $maxcharge" | bc)"
+        battery="$battery_emoji $(echo "($battery * $coefficient)/1" | bc)%$delimeter" # divide by 1 to get the scale to 0 lmao
+    fi
+}
 
-		# Display our modules in the status bar
-		xsetroot -name "$song $weather $battery $uptime $date $time "
-	else
-		xsetroot -name "$song $weather $uptime $date $time "
-	fi
+while [ "$(pgrep -x dwm)" ]; do
+
+	# Here we need to use sed to add the emojis because otherwise the emojis will show up even if no song is playing
+	song="$(ncmpcpp --quiet --current-song=' %20a - %25t ' | sed "s/^/ $music_emoji/ ; s/ $/$delimeter/ ")"
+
+    set_weather
+
+    set_uptime
+
+    set_battery
+
+	date="$date_emoji $(date +"%a %d/%m/%y")$delimeter" 		# wed 28/07/2021
+	# date="$date_emoji $(date +"%a %d/%m")$delimeter" 	        # wed 28/07
+	# date="$date_emoji $(date +"%a %e %b %y")$delimeter" 		# wed 28 july 2021
+	# date="$date_emoji $(date +"%a, %b %d")$delimeter" 		    # wednesday, july 28
+
+    # The time doesn't have a delimiter since it's the right most module
+
+	time="$time_emoji $(date +"%H:%M %p")" 	                    # 0-12 with a.m p.m
+	# time="$time_emoji $(date +"%H:%M")"		                    # 24h
+	# time="$time_emoji $(date +"%H:%M:%S")"		                # 24h with seconds
+
+    xsetroot -name "$song $weather $battery $uptime $date $time " # Display our modules in the status bar
 
 	sleep 1		# Update them every second
 done
