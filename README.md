@@ -2,6 +2,8 @@
 
 This is my build of dwm, the suckless dynamic window manager for X available at https://dwm.suckless.org.
 
+My build is based on version 6.3 (2022-01-07)
+
 ![preview-image](./preview.jpg "Here's a preview")
 
 ## Features
