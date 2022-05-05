@@ -64,6 +64,7 @@ static const Rule rules[] = {
 	{  "firefox",        NULL,       NULL,               1<<8,         0,           -1 },
 	{  "st-256color",    NULL,       "alsamixer",        0,            1,           -1 },
 	{  "Qalculate-gtk",  NULL,       NULL,	             0,	           1,	        -1 },
+	{  "Tor Browser",    NULL,       NULL,               0,            1,           -1 }
 };
 
 /* layout(s) */
