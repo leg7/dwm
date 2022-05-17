@@ -22,7 +22,7 @@ delimeter=" | "
 
 # Weather config
 timer=1                     # Timer to update the weather
-updatetime=3600             # Time after how long to update in seconds 3600=1h
+updatetime=1600             # Time after how long to update in seconds 3600=1h
 location="angers"           # What city to get weather information about
 
 # This is a procedure to set and update the weather every so often
@@ -46,7 +46,6 @@ set_weather() {
 
 	# If weather could't be fetched
 	echo "$weather" | grep -qo "°" || weather=""; return
-
 }
 
 # This procedure sets the uptime with an emoji based
