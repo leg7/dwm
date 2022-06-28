@@ -182,7 +182,7 @@ static Key keys[] = {
     { 0,                            XF86XK_AudioStop,    spawn,          SHCMD("mpc -q pause") },
     { 0,                            XF86XK_AudioPlay,    spawn,          SHCMD("mpc -q play") },
     /* other */
-	{ MODKEY|ShiftMask,             XK_q,                quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_Caps_Lock,                quit,           {0} },
 };
 
 /* button definitions */
