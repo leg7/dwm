@@ -15,7 +15,6 @@ time_emoji="🕘"
 music_emoji="🎧"
 battery_emoji_high="🔋"
 battery_emoji_low="🪫"
-small_space="    "
 delimeter=" | "
 # The delimiter must be set inside the module variable otherwise if a module
 # ends up not being used we will have useless delimiters in the statusbar
@@ -31,15 +30,15 @@ set_weather() {
 	hour=$(date +"%H")
 	if { [ "$hour" -gt 19 ] || [ "$hour" -lt 6 ] ;}
 	then
-		format="?format=%m++%C+%f"
+		format="?format=%m+++%f"
 	else
-		format="?format=%c%C+%f"
+		format="?format=%c%f"
 	fi
 
 	if [ $timer -eq 1 ]
 	then
 		weather="$(curl -s "https://wttr.in/$location$format" |
-			sed "s/\(^.\)..\(.*\)/\1$small_space\2/")$delimeter"
+			sed "s/\(^.\)..\(.*\)/\1\2/ ; s/\+//")$delimeter"
 	fi
 	echo "$weather"
 	[ $timer -lt $updatetime ] && timer=$((timer+1)) || timer=1
@@ -52,7 +51,7 @@ set_weather() {
 # on how long your system has been running
 set_uptime() {
 	uptime="$(uptime | cut -d ',' -f1 | sed 's/.*up/ Up/' | tr -s ' ' |
-		sed "s/\(..\):\(..\)/\1h$small_space\2m/")"
+		sed "s/\(..\):\(..\)/\1h \2m/")"
 
 	# uptime > 4h20
 	[ "$(echo "$uptime" | tr -dc '[:digit:]')" -gt 420 ] && uptime_emoji="🫠"
@@ -89,9 +88,9 @@ set_battery() {
 		maxcharge="$(cat /sys/class/power_supply/BAT0/charge_stop_threshold)"
 		coefficient="$(echo "scale=3; 100 / $maxcharge" | bc)"
 		# divide by 1 to get the scale to 0 lmao
-		battery="$battery_emoji$small_space$(echo "($battery * $coefficient)/1" | bc)%$delimeter"
+		battery="$battery_emoji$(echo "($battery * $coefficient)/1" | bc)%$delimeter"
 	else
-		battery="$battery_emoji$small_space$battery%$delimeter"
+		battery="$battery_emoji$battery%$delimeter"
 	fi
 }
 
@@ -100,7 +99,7 @@ while [ "$(pgrep -x dwm)" ]; do
 	# Here we need to use sed to add the emojis because otherwise
 	# the emojis will show up even if no song is playing
 	song="$(ncmpcpp --quiet --current-song=' %20a - %25t ' |
-		sed "s/^/$small_space$music_emoji/ ; s/ $/$delimeter/ ")"
+		sed "s/^/$music_emoji/ ; s/ $/$delimeter/ ")"
 
 	set_weather
 
@@ -113,7 +112,7 @@ while [ "$(pgrep -x dwm)" ]; do
 
 	# The time doesn't have a delimiter since it's the right most module
 	# 0-24 with a.m p.m
-	time="$time_emoji$small_space$(date +"%H:%M$small_space%p")"
+	time="$time_emoji $(date +"%H:%M")"
 
 	xsetroot -name " $song$weather$battery$uptime$date$time "
 
