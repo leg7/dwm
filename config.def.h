@@ -17,8 +17,8 @@ static const int startwithgaps[]    = { 1 };	/* 1 means gaps are used by default
 static const unsigned int gappx[]   = { 4 };    /* default gap between windows in pixels, this can be customized for each tag */
 
 /* fonts */
-static const char *fonts[]          = { "monospace:size=10", "NotoColorEmoji:pixelsize=12:antialias=true:autohint=true" };
-static const char dmenufont[]       =  "monospace:size=10";
+static const char *fonts[]          = { "monospace:size=11", "NotoColorEmoji:pixelsize=12:antialias=true:autohint=true" };
+static const char dmenufont[]       =  "monospace:size=11";
 
 /*==================*/
 /* NORD COLORSCHEME */
