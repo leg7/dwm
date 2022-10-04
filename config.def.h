@@ -174,6 +174,7 @@ static Key keys[] = {
         { MODKEY|ShiftMask,             XK_e,                spawn,          SHCMD("emoji-picker insert") },
         { MODKEY|ShiftMask,             XK_b,                spawn,          SHCMD("firefox") },
         { MODKEY|ShiftMask,             XK_BackSpace,        spawn,          SHCMD("qalculate-gtk") },
+        { MODKEY|ShiftMask,             XK_f,                spawn,          SHCMD("thunar") },
         { MODKEY|ShiftMask,             XK_w,                spawn,          SHCMD("wpa_gui") },
 	{ MODKEY,                       XK_x,                spawn,          SHCMD("xkill") },
         { 0,                            XK_Print,            spawn,          SHCMD("flameshot gui") },
