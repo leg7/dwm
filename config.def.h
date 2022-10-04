@@ -169,6 +169,7 @@ static Key keys[] = {
         { MODKEY|ShiftMask,             XK_z,                spawn,          SHCMD(TERMINAL " -e ikhal") },
         { MODKEY|ShiftMask,             XK_m,                spawn,          SHCMD(TERMINAL " -e ncmpcpp") },
         { MODKEY|ShiftMask,             XK_t,                spawn,          SHCMD(TERMINAL " -e tremc") },
+        { MODKEY|ShiftMask,             XK_at,               spawn,          SHCMD(TERMINAL " -e neomutt") },
         { MODKEY,                       XK_e,                spawn,          SHCMD("emoji-picker") },
         { MODKEY|ShiftMask,             XK_e,                spawn,          SHCMD("emoji-picker insert") },
         { MODKEY|ShiftMask,             XK_b,                spawn,          SHCMD("firefox") },
