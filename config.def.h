@@ -7,7 +7,7 @@ static const int focusonwheel       = 0;
 /*============*/
 /* APPEARANCE */
 /*============*/
-static const unsigned int borderpx  = 2;        /* border pixel of windows */
+static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
@@ -27,13 +27,13 @@ static const char col_gray1[]       = "#2e3440";	/* black */
 static const char col_gray2[]       = "#4c566a";	/* gray */
 static const char col_gray3[]       = "#d8dee9";	/* white */
 static const char col_gray4[]       = "#eceff4"; 	/* bright white */
-static const char col_cyan[]        = "#5e81ac"; 	/* blue */
+static const char col_cyan[]        = "#ffff00"; 	/* blue */
 
 /* No color */
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray4, col_gray1, col_gray1 },
-	[SchemeSel]  = { col_gray4, col_gray2, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_gray2, col_cyan },
 };
 
 /* /1* bugswriter style colors *1/ */
