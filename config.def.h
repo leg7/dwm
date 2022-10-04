@@ -165,7 +165,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return,           spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_dollar,           spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,		XK_n,                spawn,	     SHCMD(TERMINAL " -e newsboat") },
-        { MODKEY|ShiftMask,             XK_a,                spawn,          SHCMD(TERMINAL " -e alsamixer") },
+        { MODKEY|ShiftMask,             XK_a,                spawn,          SHCMD(TERMINAL " -e pulsemixer") },
         { MODKEY|ShiftMask,             XK_z,                spawn,          SHCMD(TERMINAL " -e ikhal") },
         { MODKEY|ShiftMask,             XK_m,                spawn,          SHCMD(TERMINAL " -e ncmpcpp") },
         { MODKEY|ShiftMask,             XK_t,                spawn,          SHCMD(TERMINAL " -e tremc") },
